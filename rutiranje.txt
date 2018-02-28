@@ -1,0 +1,40 @@
+Napraviti mehanizam za rutiranje.
+
+
+1) Kreirati file s rutama koje se povezuju na metode kontrolera npr. Route::get('/home', 'HomeController@home');
+
+
+2) Kreirati Route klasu sa sljedecim staticnim metodama
+
+ a) getClass()
+
+ b) getMethod()
+
+ c) getRequestMethod()
+
+ d) resolve()
+
+ e) get('uri', '{kontroler}@{metoda}')
+
+ f) post('uri', '{kontroler}@{metoda}')
+
+
+3) Kretati se sljedecom logikom:
+
+ a) svi requestovi krecu od index.php datoteke
+
+ b) unutar index.php ucitava se route.php datoteka (tocka 1)
+
+ c) Route metode 2.d) i 2.e) spremaju podatke o rutiranju unutar nekog arraya npr. $routes
+
+ d) Pozvati Route::resolve() koja dalje usmjerava poslan zahtjev
+
+
+
+
+
+
+ napraviti routes.php s rutama i includeat route.php
+ sve rute staviti u array (resolve)
+ gledat jel pozvani uri postoji u arrayu
+ ako postoji nastaviti na class i method
