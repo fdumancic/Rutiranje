@@ -15,9 +15,38 @@ class Route
 
     protected $routes = [];
 
+    private $_uri = [];
+    private $_callback = []; 
+
+
     public function __construct(array $arguments = [])
     {
         $this->routes = $arguments;
+    }
+
+    public function add($uri, $callback)
+    {
+        $this->_uri[] = '/' . trim($uri, '/');
+        if($callback != null) {
+            $this->_callback[] = $callback;
+        }
+
+    }
+
+    public function resolve()
+    {
+        echo $uriGetParam = isset($_GET['uri']) ? '/' . $_GET['uri'] : '/';
+        echo '<br />';
+        foreach ($this->_uri as $key => $value) {
+
+            if(preg_match("#^$value$#", $uriGetParam)){
+                $useCallback = $this->_callback[$key];
+                $class = 'App\\'.self::getClass($useCallback);
+                $method = self::getMethod($useCallback);
+                call_user_func(array($class, $method));
+
+            }
+        }
     }
 
     public static function getClass($callback)
@@ -43,7 +72,7 @@ class Route
     	return $this->requestMethods;
     }
 
-    public static function resolve($uri, $callback)
+/*    public static function resolve($uri, $callback)
     {
     	if($_SERVER['REQUEST_URI'] == $uri) {
             $class = 'App\\'.self::getClass($callback);
@@ -56,7 +85,7 @@ class Route
             die();
         }
     }
-
+*/
     public static function get($uri, $callback)
     {
         $class_name = get_called_class();
@@ -92,9 +121,9 @@ class HomeController
 
 class PostController
 {
-    public function create()
+    public function read()
     {
-        var_dump('This is function create');
+        var_dump('This is method read');
     }
 
 }
