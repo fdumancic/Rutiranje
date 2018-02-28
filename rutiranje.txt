@@ -38,3 +38,12 @@ Napraviti mehanizam za rutiranje.
  sve rute staviti u array (resolve)
  gledat jel pozvani uri postoji u arrayu
  ako postoji nastaviti na class i method
+
+
+ [
+ 	'/' =>[
+ 		'class' =>
+ 		'method' =>
+ 		'request_method' =>
+ 	]
+ ]

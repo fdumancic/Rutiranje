@@ -11,24 +11,28 @@ class Route
     public $class;
     protected $controller = 'home';
     protected $method = 'index';
-    protected $params = [];*/
+    protected $params = [];
 
-    protected $routes = [];
+    protected $routes = []; */
 
     private $_uri = [];
-    private $_callback = []; 
+    private $_callback = [];
+    private $_requestMethod = [];
 
 
-    public function __construct(array $arguments = [])
+ /*   public function __construct(array $arguments = [])
     {
         $this->routes = $arguments;
     }
-
-    public function add($uri, $callback)
+*/
+    public function add($uri, $callback, $request_method)
     {
         $this->_uri[] = '/' . trim($uri, '/');
         if($callback != null) {
             $this->_callback[] = $callback;
+        }
+        if($request_method != null) {
+            $this->_requestMethod[] = $request_method;
         }
 
     }
@@ -43,9 +47,15 @@ class Route
                 $useCallback = $this->_callback[$key];
                 $class = 'App\\'.self::getClass($useCallback);
                 $method = self::getMethod($useCallback);
-                call_user_func(array($class, $method));
 
+                $useMethod = $this->_requestMethod[$key];
+            if($_SERVER['REQUEST_METHOD'] == $useMethod){
+                var_dump($useMethod);
+                 
             }
+                return call_user_func(array($class, $method));
+            }
+
         }
     }
 
@@ -115,6 +125,11 @@ class HomeController
     public function index()
     {
         var_dump('This is method index');
+    }
+
+    public function delete()
+    {
+        var_dump('This is method delete');
     }
 
 }

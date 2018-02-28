@@ -12,9 +12,9 @@ Route::post('/create', 'PostController@create');*/
 
 $route = new Route();
 
-$route->add('/', 'HomeController@index');
-$route->add('/about', 'HomeController@index');
-$route->add('/contact', 'PostController@read');
+$route->add('/', 'HomeController@index', 'GET');
+$route->add('/about', 'HomeController@delete', 'GET');
+$route->add('/contact', 'PostController@read', 'POST');
 
 echo '<pre>';
 print_r($route);
@@ -22,4 +22,3 @@ print_r($route);
 $route->resolve();
 
 echo '<pre>';
-print_r($_SERVER);
