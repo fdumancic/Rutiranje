@@ -4,7 +4,7 @@ Napraviti mehanizam za rutiranje.
 1) Kreirati file s rutama koje se povezuju na metode kontrolera npr. Route::get('/home', 'HomeController@home');
 
 
-2) Kreirati Route klasu sa sljedecim staticnim metodama
+2) Kreirati Router klasu sa sljedecim staticnim metodama
 
  a) getClass()
 
@@ -40,10 +40,11 @@ Napraviti mehanizam za rutiranje.
  ako postoji nastaviti na class i method
 
 
- [
- 	'/' =>[
- 		'class' =>
- 		'method' =>
- 		'request_method' =>
- 	]
- ]
+----------
+
+router::get(...) -> kreira novu instancu klase route
+router::dispatch()
+
+
+
+https://github.com/skipperbent/simple-php-router/blob/master/src/Pecee/SimpleRouter/SimpleRouter.php

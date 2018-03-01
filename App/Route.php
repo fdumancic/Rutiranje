@@ -4,59 +4,13 @@ namespace App;
 
 class Route
 {
-/*    protected $requestMethods = ['get', 'post'];
+	public static $routes = [];
 
-    public $callback;
-    public $uri;
-    public $class;
-    protected $controller = 'home';
-    protected $method = 'index';
-    protected $params = [];
-
-    protected $routes = []; */
-
-    private $_uri = [];
-    private $_callback = [];
-    private $_requestMethod = [];
-
-
- /*   public function __construct(array $arguments = [])
+    public function __construct($url, $callback, $request_method)
     {
-        $this->routes = $arguments;
-    }
-*/
-    public function add($uri, $callback, $request_method)
-    {
-        $this->_uri[] = '/' . trim($uri, '/');
-        if($callback != null) {
-            $this->_callback[] = $callback;
-        }
-        if($request_method != null) {
-            $this->_requestMethod[] = $request_method;
-        }
-
-    }
-
-    public function resolve()
-    {
-        echo $uriGetParam = isset($_GET['uri']) ? '/' . $_GET['uri'] : '/';
-        echo '<br />';
-        foreach ($this->_uri as $key => $value) {
-
-            if(preg_match("#^$value$#", $uriGetParam)){
-                $useCallback = $this->_callback[$key];
-                $class = 'App\\'.self::getClass($useCallback);
-                $method = self::getMethod($useCallback);
-
-                $useMethod = $this->_requestMethod[$key];
-            if($_SERVER['REQUEST_METHOD'] == $useMethod){
-                var_dump($useMethod);
-                 
-            }
-                return call_user_func(array($class, $method));
-            }
-
-        }
+        self::$routes['uri'] = $url;
+        self::$routes['callback'] = $callback;
+        self::$routes['request_method'] = $request_method;
     }
 
     public static function getClass($callback)
@@ -77,73 +31,28 @@ class Route
         return null;
     }
 
-    public function getRequestMethod()
+    public static function getRequestMethod()
     {
-    	return $this->requestMethods;
+        return self::$routes['request_method'];
     }
 
-/*    public static function resolve($uri, $callback)
+    public static function getUri()
     {
-    	if($_SERVER['REQUEST_URI'] == $uri) {
-            $class = 'App\\'.self::getClass($callback);
-            $method = self::getMethod($callback);
-
-           return call_user_func(array($class, $method));
-        }
-        else {
-            var_dump('wrong uri');
-            die();
-        }
-    }
-*/
-    public static function get($uri, $callback)
-    {
-        $class_name = get_called_class();
-        $class = new $class_name;
-        var_dump('GET');
-        return call_user_func_array(array($class, 'resolve'), array($uri, $callback));
+        return self::$routes['uri'];
     }
 
-    public static function post($uri, $callback)
-    {
-    	$class_name = get_called_class();
-        $class = new $class_name;
-        var_dump('POST');
-        return call_user_func_array(array($class, 'resolve'), array($uri, $callback));
-    }
-
-    public function __get($name)
-    {
-        if(array_key_exists($name, $this->routes)) {
-            return $this->routes[$name];
-        }
-    }
-}
-
-class HomeController
-{
-    public function index()
-    {
-        var_dump('This is method index');
-    }
-
-    public function delete()
-    {
-        var_dump('This is method delete');
-    }
 
 }
 
-class PostController
-{
-    public function read()
-    {
-        var_dump('This is method read');
-    }
+$a = new Route('/about', 'HomeController@delete', 'GET');
 
-}
-/*Route::get('/home', 'HomeController@home');*/
+$uri = $a::getUri();
+$method = $a::getMethod($a::$routes['callback']);
+$class = $a::getClass($a::$routes['callback']);
+$rm = $a::getRequestMethod();
 
-$a = new Route(["uri" => "/home", "callback" => "Controller@index"]);
-/*$a->resolve();*/
-
+var_dump($uri);
+var_dump($class);
+var_dump($method);
+var_dump($rm);
+die();
