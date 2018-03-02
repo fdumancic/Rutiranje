@@ -1,84 +1,60 @@
 <?php
-class Route
-{
-    public $routes = [];
 
-    public function __construct(array $routes)
-    {
-        $this->routes = $routes;
-    }
-}
+namespace App;
+include 'Route.php';
 
 class Router
 {
-    public $routes = [];
+    public static $routes = [];
 
-    public function __construct(array $routes)
+/*    public function add($uri, $callback, $request_method)
     {
-        $this->routes = $routes;
+        $this->_uri[] = '/' . trim($uri, '/');
+        $this->_callback[] = $callback;
+        $this->_requestMethod[] = $request_method;
     }
-    public function getClass()
+
+    public static function resolve($routes)
     {
-    	if (is_string($this->callback) === true && strpos($this->callback, '@') !== false) {
-            $tmp = explode('@', $this->callback);
-            return $tmp[0];
+        foreach ($variable as $key => $value) {
+
+            //return call_user_func(array($class, $method));
         }
-        return null;
     }
 
-    public function getMethod()
-    {
-    	if (is_string($this->callback) === true && strpos($this->callback, '@') !== false) {
-            $tmp = explode('@', $this->callback);
-            return $tmp[1];
-        }
-        return null;
-    }
-
-    public function resolve($url, $callback)
+    public static function match($route)
     {
         $matched = false;
-        foreach($this->routes as $route) {
-            if(in_array($url, $route->routes)) {
-                $matched = true;
-                break;
+        $uriGetParam = isset($_GET['uri']) ? '/' . $_GET['uri'] : '/';
+        $useMethod = $route['request_method'];
+        $value = $route['uri'];
+        if(preg_match("#^$value$#", $uriGetParam) && ($_SERVER['REQUEST_METHOD'] == $useMethod)){
+            $matched = true;
+            return $matched;                
+        }
+    }
+
+    public static function dispatch()
+    {
+        foreach (self::$routes as $route) {
+            if(match($route) {
+                $useCallback = $route['callback'];
+                $class ='App\Controllers\\'.self::getClass($useCallback);
+                $method = self::getMethod($useCallback);
+                return call_user_func(array($class, $method);
             }
         }
-
-        if(!$matched) throw new Exception('Could not match route.');
-
-        $match = clone($route);
-
-        $match->getClass();
-        $match->getMethod();
-
-        var_dump($match->class);
-        die();
-
-        return $match;
     }
-}
-
-class Controller
-{
-    public function read()
+*/
+    public static function GET($url, $callback)
     {
-        /*var_dump(func_get_args());
-        var_dump('read');
-        die();*/
+        $route = new Route($url, $callback, 'GET');
+        array_push(self::$routes, $route);
     }
 }
 
-$route = new Route(['request_method' => 'get', 'pattern' => '/read', 'callback' => 'Controller@read']);
-/*$route->callback    = 'Controller@read';
-$route->pattern = '/read';
-$route->class   = 'Controller';
-$route->method  = 'read';*/
+Router::GET('/', 'HomeController@index');
+Router::GET('/users', 'PostController@read');
 
-$router = new Router(array($route));
-$match  = $router->resolve('/read', 'Controller@read');
-
-// Dispatch
-if($match) {
-    call_user_func_array(array(new $match->class, $match->method), $match->params);
-}
+var_dump($routes); //fix
+die();
