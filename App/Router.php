@@ -11,9 +11,20 @@ class Router
 {
     const CONTROLLER_NAMESPACE = "\App\Controllers\\";
     protected static $routes = [];
-    protected static $has_match = false;
-    protected static $has_path = false;
-    protected static $has_method = false;
+    protected $has_match = false;
+    protected $has_path = false;
+    protected $has_method = false;
+    protected static $instance;
+
+    public static function getInstance()
+    {
+        if(empty(self::$instance)) {
+
+           self::$instance = new Router;
+        }
+ 
+        return self::$instance;
+    }
 
     public static function resolve()
     {
@@ -24,35 +35,37 @@ class Router
             }
         }
 
-        if(self::$has_match) {
+        if(self::$instance->has_match) {
             self::dispatch($matched_route);
         }
 
-        if(!self::$has_path) {
+        if(!self::$instance->has_path) {
             throw new \Exception('Wrong path');
         }
 
-        if(!self::$has_method) {
+        if(!self::$instance->has_method) {
             throw new \Exception('Wrong request method');
         }
     }
 
     public static function validate($route)
     {
+        $instance = self::getInstance();
+
         $uriGetParam = isset($_GET['uri']) ? '/' . $_GET['uri'] : '/';
         $value = $route['uri'];
         $requestMethod = $route['request_method'];
 
         if(preg_match("#^$value$#", $uriGetParam)) {
-            self::$has_path = true;
+            self::$instance->has_path = true;
         }
 
         if($requestMethod == $_SERVER['REQUEST_METHOD'] && preg_match("#^$value$#", $uriGetParam)) {
-            self::$has_method = true;
+            self::$instance->has_method = true;
         }
 
         if($requestMethod == $_SERVER['REQUEST_METHOD'] && preg_match("#^$value$#", $uriGetParam)) {
-            self::$has_match = true;
+            self::$instance->has_match = true;
             return $route;
         }
     }
