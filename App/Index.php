@@ -2,33 +2,18 @@
 
 namespace App;
 
-include 'Route.php';
-include 'Router.php';
+require_once 'Route.php';
+require_once 'Router.php';
 
-/*Route::get('/', 'HomeController@index');
+Router::GET('/', 'HomeController@index');
+Router::GET('/about', 'PostController@read');
+Router::POST('/post', 'HomeController@create');
+Router::PUT('/put', 'HomeController@show');
+Router::PATCH('/patch', 'HomeController@read');
+Router::DELETE('/delete', 'PostController@delete');
 
-Route::get('/rutiranje/App/', 'HomeController@index');
-
-Route::post('/create', 'PostController@create');
-
-$route = new Router();
-
-$route->add('/', 'HomeController@index', 'GET');
-$route->add('/about', 'HomeController@delete', 'GET');
-$route->add('/contact', 'PostController@read', 'POST');
-
-$route->GET('/posts', 'PostController@read');
-
-echo '<pre>';
-print_r($route);
-
-$route->resolve();
-
-echo '<pre>';
-*/
-
-$a = new Route;
-$a->GET('/', 'HomeController@index');
-$a->GET('/about', 'HomeController@delete');
-$a->GET('/users', 'PostController@read');
-$a->POST('/posts', 'PostController@read');
+try {
+	Router::resolve();
+} catch (\Exception $e) {
+	var_dump($e);
+}

@@ -1,105 +1,84 @@
 <?php
 
 namespace App;
-<<<<<<< HEAD
-include 'Route.php';
+
+require_once 'Route.php';
+require_once 'Controllers\HomeController.php';
+require_once 'Controllers\PostController.php';
+
 
 class Router
 {
-    public static $routes = [];
+    const CONTROLLER_NAMESPACE = "\App\Controllers\\";
+    protected static $routes = [];
+    protected static $has_match = false;
+    protected static $has_path = false;
+    protected static $has_method = false;
 
-/*    public function add($uri, $callback, $request_method)
-=======
-
-include 'Controllers\Router.php';
-
-class Router
-{
-
-    public function add($uri, $callback, $request_method)
->>>>>>> 2fa901802d33e37703d3cadf69ec0c28e6ee108a
-    {
-        $this->_uri[] = '/' . trim($uri, '/');
-        $this->_callback[] = $callback;
-        $this->_requestMethod[] = $request_method;
-<<<<<<< HEAD
-    }
-
-    public static function resolve($routes)
-    {
-        foreach ($variable as $key => $value) {
-
-            //return call_user_func(array($class, $method));
-        }
-    }
-
-    public static function match($route)
-    {
-        $matched = false;
-        $uriGetParam = isset($_GET['uri']) ? '/' . $_GET['uri'] : '/';
-        $useMethod = $route['request_method'];
-        $value = $route['uri'];
-        if(preg_match("#^$value$#", $uriGetParam) && ($_SERVER['REQUEST_METHOD'] == $useMethod)){
-            $matched = true;
-            return $matched;                
-        }
-    }
-
-    public static function dispatch()
+    public static function resolve()
     {
         foreach (self::$routes as $route) {
-            if(match($route) {
-                $useCallback = $route['callback'];
-                $class ='App\Controllers\\'.self::getClass($useCallback);
-                $method = self::getMethod($useCallback);
-                return call_user_func(array($class, $method);
+            $matched_route = self::validate($route->route_data);
+            if($matched_route != null){
+                break;
             }
         }
-    }
-*/
-    public static function GET($url, $callback)
-    {
-        $route = new Route($url, $callback, 'GET');
-        array_push(self::$routes, $route);
-    }
-}
 
-Router::GET('/', 'HomeController@index');
-Router::GET('/users', 'PostController@read');
+        if(self::$has_match) {
+            self::dispatch($matched_route);
+        }
 
-var_dump($routes); //fix
-die();
-=======
+        if(!self::$has_path) {
+            throw new \Exception('Wrong path');
+        }
+
+        if(!self::$has_method) {
+            throw new \Exception('Wrong request method');
+        }
     }
 
-    public function resolve($routes)
+    public static function validate($route)
     {
         $uriGetParam = isset($_GET['uri']) ? '/' . $_GET['uri'] : '/';
-        $useMethod = $routes['request_method'];
-        $value = $routes['uri'];
-        if(preg_match("#^$value$#", $uriGetParam) && ($_SERVER['REQUEST_METHOD'] == $useMethod)){
-            $useCallback = $routes['callback'];
-            $class = 'App\Controllers\\'.self::getClass($useCallback);
-            $method = self::getMethod($useCallback);
-            return call_user_func(array($class, $method));                
+        $value = $route['uri'];
+        $requestMethod = $route['request_method'];
+
+        if(preg_match("#^$value$#", $uriGetParam)) {
+            self::$has_path = true;
+        }
+
+        if($requestMethod == $_SERVER['REQUEST_METHOD'] && preg_match("#^$value$#", $uriGetParam)) {
+            self::$has_method = true;
+        }
+
+        if($requestMethod == $_SERVER['REQUEST_METHOD'] && preg_match("#^$value$#", $uriGetParam)) {
+            self::$has_match = true;
+            return $route;
         }
     }
 
-    public static function GET($url, $callback)
+    public static function dispatch($route)
     {
-        $route = new Route($url, $callback, 'GET');
-
-        return $route;
+        $class = self::CONTROLLER_NAMESPACE . $route['class'];
+        $method = $route['method'];
+        $instance = new $class;
+        $instance->$method();
     }
 
-
-    public function __get($name)
+    public static function __callStatic($method, $arguments)
     {
-        if(array_key_exists($name, $this->routes)) {
-            return $this->routes[$name];
+        if(in_array($method, ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])){
+            if(count($arguments)) {
+                $exploded = explode('@', $arguments[1]); 
+                $route = new Route($arguments[0], $exploded[0], $exploded[1], $method);
+                self::$routes[] = $route;
+            }
+        } else {
+            $class = get_called_class();
+            $trace = debug_backtrace();
+            $file = $trace[0]['file'];
+            $line = $trace[0]['line'];
+            trigger_error("Call to undefined method $class::$method() in $file on line $line", E_USER_ERROR);
         }
     }
 }
-
-
->>>>>>> 2fa901802d33e37703d3cadf69ec0c28e6ee108a

@@ -45,6 +45,11 @@ Napraviti mehanizam za rutiranje.
 router::get(...) -> kreira novu instancu klase route
 router::dispatch()
 
+router
 
+has_path - false
+has_method
+has_class
+has_request_method
 
 https://github.com/skipperbent/simple-php-router/blob/master/src/Pecee/SimpleRouter/SimpleRouter.php

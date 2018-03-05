@@ -4,55 +4,33 @@ namespace App;
 
 class Route
 {
-	public static $routes = [];
+    public $route_data = [];
 
-    public function __construct($url, $callback, $request_method)
+    public function __construct($uri, $class, $method, $request_method)
     {
-        self::$routes['uri'] = $url;
-        self::$routes['callback'] = $callback;
-        self::$routes['request_method'] = $request_method;
+        $this->route_data['uri'] = $uri;
+        $this->route_data['class'] = $class;
+        $this->route_data['method'] = $method;
+        $this->route_data['request_method'] = $request_method;
     }
 
-    public static function getClass($callback)
+    public function getUri()
     {
-    	if (is_string($callback) === true && strpos($callback, '@') !== false) {
-            $tmp = explode('@', $callback);
-            return $tmp[0];
-        }
-        return null;
+        return $this->route_data['uri'];
     }
 
-    public static function getMethod($callback)
+    public function getClass()
     {
-    	if (is_string($callback) === true && strpos($callback, '@') !== false) {
-            $tmp = explode('@', $callback);
-            return $tmp[1];
-        }
-        return null;
+        return $this->route_data['class'];
     }
 
-    public static function getRequestMethod()
+    public function getMethod()
     {
-        return self::$routes['request_method'];
+        return $this->route_data['method'];
     }
 
-    public static function getUri()
+    public function getRequestMethod()
     {
-        return self::$routes['uri'];
+        return $this->route_data['request_method'];
     }
-
-
 }
-
-$a = new Route('/about', 'HomeController@delete', 'GET');
-
-$uri = $a::getUri();
-$method = $a::getMethod($a::$routes['callback']);
-$class = $a::getClass($a::$routes['callback']);
-$rm = $a::getRequestMethod();
-
-var_dump($uri);
-var_dump($class);
-var_dump($method);
-var_dump($rm);
-die();
